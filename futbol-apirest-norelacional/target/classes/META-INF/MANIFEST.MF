@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Java-Version: 21
+Build-Jdk-Spec: 25
+Implementation-Title: futbol-apirest-norelacional
+Implementation-Version: 1
+Created-By: Maven Integration for Eclipse
+

@@ -1,0 +1,2792 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Champions Fútbol | Gestión deportiva</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Fuentes -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+
+        /* =========================================================
+           VARIABLES
+        ========================================================= */
+
+        :root {
+
+            --bg: #020817;
+            --bg-2: #06132c;
+            --bg-3: #0a1d3d;
+
+            --blue: #1464ff;
+            --blue-light: #54a7ff;
+            --blue-soft: #8fc7ff;
+
+            --white: #ffffff;
+            --text: #eaf3ff;
+            --muted: #8498b7;
+            --muted-2: #5f7393;
+
+            --line: rgba(255,255,255,.10);
+            --line-blue: rgba(73,151,255,.28);
+
+            --glass: rgba(7,22,48,.68);
+
+            --shadow:
+                0 30px 90px rgba(0,0,0,.42);
+
+            --ease: cubic-bezier(.22,.61,.36,1);
+        }
+
+
+        /* =========================================================
+           RESET
+        ========================================================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+
+            margin: 0;
+
+            color: var(--text);
+
+            font-family: 'Barlow', sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 10% 0%,
+                    rgba(26,91,190,.15),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 40%,
+                    rgba(24,103,255,.10),
+                    transparent 30%
+                ),
+                var(--bg);
+
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Barlow Condensed', sans-serif;
+        }
+
+
+        /* =========================================================
+           GRID DECORATIVO
+        ========================================================= */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: -1;
+
+            opacity: .18;
+
+            background-image:
+
+                linear-gradient(
+                    rgba(255,255,255,.025) 1px,
+                    transparent 1px
+                ),
+
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.025) 1px,
+                    transparent 1px
+                );
+
+            background-size: 90px 90px;
+
+            mask-image:
+                linear-gradient(
+                    to bottom,
+                    black,
+                    transparent 70%
+                );
+        }
+
+
+        /* =========================================================
+           NAVBAR
+        ========================================================= */
+
+        .main-navbar {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+            right: 0;
+
+            z-index: 1000;
+
+            padding: 18px 0;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(2,8,23,.92),
+                    rgba(2,8,23,.55)
+                );
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            border-bottom:
+                1px solid rgba(255,255,255,.06);
+        }
+
+        .navbar-brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            color: white !important;
+
+            font-family:
+                'Barlow Condensed',
+                sans-serif;
+
+            font-size: 1.5rem;
+
+            font-weight: 700;
+
+            letter-spacing: .5px;
+        }
+
+        .brand-mark {
+
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #176bff,
+                    #08265a
+                );
+
+            border:
+                1px solid rgba(123,190,255,.35);
+
+            box-shadow:
+                0 8px 30px rgba(20,100,255,.25),
+                inset 0 0 20px rgba(255,255,255,.08);
+        }
+
+        .brand-mark svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .brand-subtitle {
+
+            display: block;
+
+            margin-top: -3px;
+
+            color: #7891b5;
+
+            font-family: 'Barlow', sans-serif;
+
+            font-size: .62rem;
+
+            font-weight: 500;
+
+            letter-spacing: 1.6px;
+
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+        }
+
+        .nav-links .nav-link {
+
+            position: relative;
+
+            padding: 9px 14px !important;
+
+            color: #91a6c3;
+
+            font-size: .91rem;
+
+            font-weight: 500;
+
+            border-radius: 8px;
+
+            transition: .25s ease;
+        }
+
+        .nav-links .nav-link:hover {
+
+            color: white;
+
+            background:
+                rgba(255,255,255,.055);
+        }
+
+        .nav-action {
+
+            margin-left: 12px;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            color: #06132e;
+
+            background: #e8f3ff;
+
+            font-size: .88rem;
+
+            font-weight: 700;
+
+            transition: .25s ease;
+        }
+
+        .nav-action:hover {
+
+            color: #06132e;
+
+            transform: translateY(-2px);
+
+            background: white;
+
+            box-shadow:
+                0 10px 30px rgba(80,160,255,.20);
+        }
+
+
+        /* =========================================================
+           HERO / CARRUSEL
+        ========================================================= */
+
+        .hero {
+
+            position: relative;
+
+            min-height: 820px;
+
+            height: 100vh;
+
+            max-height: 960px;
+
+            overflow: hidden;
+        }
+
+        .hero-slide {
+
+            position: absolute;
+
+            inset: 0;
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transition:
+                opacity 1s ease,
+                visibility 1s ease;
+        }
+
+        .hero-slide.active {
+
+            opacity: 1;
+
+            visibility: visible;
+        }
+
+        .hero-image {
+
+            position: absolute;
+
+            inset: 0;
+
+            background-position: center;
+            background-size: cover;
+
+            transform: scale(1.04);
+
+            transition:
+                transform 7s var(--ease);
+        }
+
+        .hero-slide.active .hero-image {
+
+            transform: scale(1);
+        }
+
+        .hero-slide:nth-child(1) .hero-image {
+
+            background-image:
+                url("https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=2200&q=90");
+        }
+
+        .hero-slide:nth-child(2) .hero-image {
+
+            background-image:
+                url("https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=2200&q=90");
+        }
+
+        .hero-slide:nth-child(3) .hero-image {
+
+            background-image:
+                url("https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=2200&q=90");
+        }
+
+        .hero-overlay {
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    rgba(1,7,20,.98) 0%,
+                    rgba(2,10,28,.88) 28%,
+                    rgba(2,10,28,.52) 58%,
+                    rgba(2,8,23,.72) 100%
+                ),
+
+                linear-gradient(
+                    0deg,
+                    #020817 0%,
+                    transparent 40%
+                );
+        }
+
+        .hero-content {
+
+            position: relative;
+
+            z-index: 5;
+
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+        }
+
+        .hero-copy {
+
+            max-width: 800px;
+
+            padding-top: 80px;
+        }
+
+        .eyebrow {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 25px;
+
+            padding: 7px 13px;
+
+            color: #91c7ff;
+
+            border:
+                1px solid rgba(95,169,255,.30);
+
+            background:
+                rgba(13,62,130,.24);
+
+            border-radius: 100px;
+
+            font-size: .72rem;
+
+            font-weight: 700;
+
+            letter-spacing: 2px;
+
+            text-transform: uppercase;
+
+            backdrop-filter: blur(12px);
+        }
+
+        .eyebrow-dot {
+
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: #54a7ff;
+
+            box-shadow:
+                0 0 12px #54a7ff;
+        }
+
+        .hero-title {
+
+            margin: 0 0 25px;
+
+            color: white;
+
+            font-size:
+                clamp(4rem, 8vw, 8.5rem);
+
+            line-height: .84;
+
+            font-weight: 800;
+
+            letter-spacing: -2px;
+
+            text-transform: uppercase;
+        }
+
+        .hero-title span {
+
+            display: block;
+
+            color: #55a8ff;
+
+            text-shadow:
+                0 0 50px rgba(50,135,255,.25);
+        }
+
+        .hero-text {
+
+            max-width: 620px;
+
+            margin-bottom: 30px;
+
+            color: #b6c6dc;
+
+            font-size: 1.08rem;
+
+            line-height: 1.75;
+        }
+
+        .hero-buttons {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+        }
+
+        .hero-btn {
+
+            min-height: 50px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            padding: 0 20px;
+
+            border-radius: 8px;
+
+            font-weight: 700;
+
+            font-size: .9rem;
+
+            transition: .3s var(--ease);
+        }
+
+        .hero-btn-primary {
+
+            color: #041127;
+
+            background: #edf6ff;
+
+            box-shadow:
+                0 15px 35px rgba(0,0,0,.25);
+        }
+
+        .hero-btn-primary:hover {
+
+            color: #041127;
+
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 20px 45px rgba(60,145,255,.22);
+        }
+
+        .hero-btn-secondary {
+
+            color: white;
+
+            border:
+                1px solid rgba(255,255,255,.18);
+
+            background:
+                rgba(255,255,255,.07);
+
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-btn-secondary:hover {
+
+            color: white;
+
+            background:
+                rgba(255,255,255,.13);
+
+            transform: translateY(-3px);
+        }
+
+
+        /* =========================================================
+           HERO INFO
+        ========================================================= */
+
+        .hero-info {
+
+            position: absolute;
+
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            z-index: 10;
+
+            padding-bottom: 45px;
+        }
+
+        .hero-info-inner {
+
+            display: flex;
+
+            align-items: end;
+
+            justify-content: space-between;
+        }
+
+        .hero-meta {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 28px;
+        }
+
+        .meta-item {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 2px;
+        }
+
+        .meta-number {
+
+            color: white;
+
+            font-family:
+                'Barlow Condensed',
+                sans-serif;
+
+            font-size: 1.7rem;
+
+            font-weight: 700;
+        }
+
+        .meta-label {
+
+            color: #7085a4;
+
+            font-size: .68rem;
+
+            font-weight: 600;
+
+            letter-spacing: 1.4px;
+
+            text-transform: uppercase;
+        }
+
+        .hero-controls {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .slide-counter {
+
+            margin-right: 12px;
+
+            color: #90a5c1;
+
+            font-family:
+                'Barlow Condensed',
+                sans-serif;
+
+            font-size: 1rem;
+
+            letter-spacing: 2px;
+        }
+
+        .slider-btn {
+
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            border:
+                1px solid rgba(255,255,255,.15);
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,.06);
+
+            cursor: pointer;
+
+            transition: .25s ease;
+        }
+
+        .slider-btn:hover {
+
+            background:
+                rgba(48,126,255,.35);
+
+            border-color:
+                rgba(91,166,255,.45);
+        }
+
+        .slider-progress {
+
+            position: absolute;
+
+            left: 0;
+            bottom: 0;
+
+            height: 2px;
+
+            width: 33.33%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2177ff,
+                    #72bdff
+                );
+
+            transition:
+                width .4s ease;
+        }
+
+
+        /* =========================================================
+           SECCIÓN INTRO
+        ========================================================= */
+
+        .intro {
+
+            position: relative;
+
+            padding: 125px 0 75px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #020817,
+                    #06142d
+                );
+        }
+
+        .section-eyebrow {
+
+            margin-bottom: 14px;
+
+            color: #579fff;
+
+            font-size: .72rem;
+
+            font-weight: 700;
+
+            letter-spacing: 2.5px;
+
+            text-transform: uppercase;
+        }
+
+        .section-heading {
+
+            margin: 0;
+
+            color: white;
+
+            font-size:
+                clamp(3rem, 5vw, 5rem);
+
+            line-height: .9;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+        }
+
+        .section-heading span {
+
+            color: #5caaff;
+        }
+
+        .intro-description {
+
+            max-width: 550px;
+
+            margin: 0;
+
+            color: #8195b3;
+
+            font-size: 1rem;
+
+            line-height: 1.8;
+        }
+
+
+        /* =========================================================
+           MÓDULOS
+        ========================================================= */
+
+        .modules {
+
+            padding: 40px 0 130px;
+
+            background: #06142d;
+        }
+
+        .module {
+
+            position: relative;
+
+            height: 100%;
+
+            min-height: 330px;
+
+            padding: 30px;
+
+            overflow: hidden;
+
+            border:
+                1px solid var(--line);
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(13,39,78,.90),
+                    rgba(4,16,38,.95)
+                );
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,.18);
+
+            transition:
+                transform .35s var(--ease),
+                border-color .35s ease,
+                box-shadow .35s ease;
+        }
+
+        .module:hover {
+
+            transform: translateY(-8px);
+
+            border-color:
+                rgba(79,158,255,.35);
+
+            box-shadow:
+                0 30px 75px rgba(0,0,0,.35),
+                0 0 45px rgba(27,100,220,.08);
+        }
+
+        .module::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 300px;
+            height: 300px;
+
+            right: -150px;
+            bottom: -150px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(37,124,255,.20),
+                    transparent 65%
+                );
+
+            transition: .4s ease;
+        }
+
+        .module:hover::before {
+
+            transform: scale(1.3);
+
+            opacity: .8;
+        }
+
+        .module-number {
+
+            position: absolute;
+
+            right: 24px;
+            top: 18px;
+
+            color:
+                rgba(255,255,255,.07);
+
+            font-family:
+                'Barlow Condensed',
+                sans-serif;
+
+            font-size: 5rem;
+
+            font-weight: 800;
+
+            line-height: 1;
+        }
+
+        .module-icon {
+
+            position: relative;
+
+            width: 54px;
+            height: 54px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 35px;
+
+            color: #82bdff;
+
+            border:
+                1px solid rgba(89,166,255,.22);
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(50,128,236,.22),
+                    rgba(16,48,94,.20)
+                );
+
+            box-shadow:
+                inset 0 0 20px rgba(80,160,255,.04);
+        }
+
+        .module-icon svg {
+
+            width: 26px;
+            height: 26px;
+        }
+
+        .module h3 {
+
+            position: relative;
+
+            margin: 0 0 10px;
+
+            color: white;
+
+            font-size: 2.25rem;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+        }
+
+        .module p {
+
+            position: relative;
+
+            max-width: 500px;
+
+            min-height: 55px;
+
+            margin-bottom: 24px;
+
+            color: #8094b2;
+
+            font-size: .92rem;
+
+            line-height: 1.65;
+        }
+
+        .module-actions {
+
+            position: relative;
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+        }
+
+        .module-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 9px 13px;
+
+            color: #b9cce4;
+
+            border:
+                1px solid rgba(255,255,255,.10);
+
+            border-radius: 7px;
+
+            background:
+                rgba(255,255,255,.045);
+
+            font-size: .82rem;
+
+            font-weight: 600;
+
+            transition: .25s ease;
+        }
+
+        .module-btn:hover {
+
+            color: white;
+
+            background:
+                rgba(72,145,255,.17);
+
+            border-color:
+                rgba(80,155,255,.30);
+        }
+
+        .module-btn.primary {
+
+            color: #06132c;
+
+            background:
+                #e9f4ff;
+
+            border-color:
+                #e9f4ff;
+        }
+
+        .module-btn.primary:hover {
+
+            color: #06132c;
+
+            background: white;
+
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================================
+           ESTADÍSTICAS
+        ========================================================= */
+
+        .stats {
+
+            position: relative;
+
+            padding: 95px 0;
+
+            background:
+
+                linear-gradient(
+                    90deg,
+                    rgba(7,31,67,.95),
+                    rgba(3,16,37,.95)
+                );
+        }
+
+        .stats::before {
+
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(47,132,255,.08),
+                    transparent
+                );
+
+            pointer-events: none;
+        }
+
+        .stat {
+
+            padding: 10px 35px;
+
+            border-left:
+                1px solid rgba(255,255,255,.10);
+        }
+
+        .stat:first-child {
+
+            border-left: none;
+        }
+
+        .stat-number {
+
+            color: white;
+
+            font-family:
+                'Barlow Condensed',
+                sans-serif;
+
+            font-size: 4rem;
+
+            font-weight: 700;
+
+            line-height: .9;
+        }
+
+        .stat-number span {
+
+            color: #51a4ff;
+        }
+
+        .stat-label {
+
+            margin-top: 10px;
+
+            color: #7186a5;
+
+            font-size: .73rem;
+
+            font-weight: 600;
+
+            letter-spacing: 1.5px;
+
+            text-transform: uppercase;
+        }
+
+
+        /* =========================================================
+           CTA
+        ========================================================= */
+
+        .cta {
+
+            position: relative;
+
+            padding: 150px 0;
+
+            overflow: hidden;
+
+            background:
+
+                radial-gradient(
+                    circle at 75% 50%,
+                    rgba(32,119,255,.18),
+                    transparent 35%
+                ),
+
+                linear-gradient(
+                    180deg,
+                    #06142d,
+                    #020817
+                );
+        }
+
+        .cta::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 500px;
+            height: 500px;
+
+            right: -160px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border-radius: 50%;
+
+            border:
+                1px solid rgba(87,166,255,.10);
+
+            box-shadow:
+                0 0 0 60px rgba(87,166,255,.025),
+                0 0 0 120px rgba(87,166,255,.015);
+        }
+
+        .cta-content {
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .cta-title {
+
+            max-width: 850px;
+
+            margin: 0 0 20px;
+
+            color: white;
+
+            font-size:
+                clamp(3.3rem, 6vw, 6.5rem);
+
+            line-height: .88;
+
+            text-transform: uppercase;
+        }
+
+        .cta-title span {
+
+            color: #55a9ff;
+        }
+
+        .cta-text {
+
+            max-width: 580px;
+
+            margin-bottom: 30px;
+
+            color: #8095b3;
+
+            line-height: 1.75;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        footer {
+
+            padding: 55px 0 25px;
+
+            background: #010611;
+
+            border-top:
+                1px solid rgba(255,255,255,.07);
+        }
+
+        .footer-brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: white;
+
+            font-family:
+                'Barlow Condensed',
+                sans-serif;
+
+            font-size: 1.4rem;
+
+            font-weight: 700;
+        }
+
+        .footer-description {
+
+            max-width: 380px;
+
+            margin-top: 12px;
+
+            color: #637691;
+
+            font-size: .85rem;
+
+            line-height: 1.7;
+        }
+
+        .footer-title {
+
+            margin-bottom: 13px;
+
+            color: white;
+
+            font-family:
+                'Barlow Condensed',
+                sans-serif;
+
+            font-size: 1.1rem;
+
+            text-transform: uppercase;
+        }
+
+        .footer-links {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+        }
+
+        .footer-links a {
+
+            color: #6e819e;
+
+            font-size: .82rem;
+
+            transition: .2s ease;
+        }
+
+        .footer-links a:hover {
+
+            color: #8fc7ff;
+
+            transform: translateX(3px);
+        }
+
+        .footer-bottom {
+
+            margin-top: 45px;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid rgba(255,255,255,.06);
+
+            color: #4d607b;
+
+            font-size: .75rem;
+        }
+
+
+        /* =========================================================
+           ANIMACIONES
+        ========================================================= */
+
+        @keyframes fadeUp {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(25px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        .hero-slide.active .eyebrow {
+
+            animation:
+                fadeUp .8s .1s both;
+        }
+
+        .hero-slide.active .hero-title {
+
+            animation:
+                fadeUp .8s .2s both;
+        }
+
+        .hero-slide.active .hero-text {
+
+            animation:
+                fadeUp .8s .3s both;
+        }
+
+        .hero-slide.active .hero-buttons {
+
+            animation:
+                fadeUp .8s .4s both;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 991px) {
+
+            .main-navbar {
+                padding: 12px 0;
+            }
+
+            .nav-links {
+                padding-top: 15px;
+
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+            .nav-action {
+                margin: 10px 0 0;
+            }
+
+            .hero {
+                min-height: 760px;
+            }
+
+            .hero-title {
+                font-size: clamp(3.7rem, 12vw, 6rem);
+            }
+
+            .hero-meta {
+                gap: 18px;
+            }
+
+            .stat {
+                border-left: none;
+
+                border-top:
+                    1px solid rgba(255,255,255,.10);
+
+                padding:
+                    25px 15px;
+            }
+
+            .stat:first-child {
+                border-top: none;
+            }
+        }
+
+
+        @media (max-width: 575px) {
+
+            .hero {
+                min-height: 760px;
+            }
+
+            .hero-title {
+                font-size: 3.7rem;
+
+                letter-spacing: -1px;
+            }
+
+            .hero-text {
+                font-size: .95rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-btn {
+                width: 100%;
+            }
+
+            .hero-info-inner {
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                gap: 20px;
+            }
+
+            .hero-meta {
+                width: 100%;
+
+                justify-content: space-between;
+            }
+
+            .hero-controls {
+                align-self: flex-end;
+            }
+
+            .intro {
+                padding-top: 85px;
+            }
+
+            .module {
+                min-height: auto;
+
+                padding: 25px;
+            }
+
+            .module-number {
+                font-size: 4rem;
+            }
+
+            .cta {
+                padding: 100px 0;
+            }
+
+            .cta-title {
+                font-size: 3.5rem;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<nav class="navbar navbar-expand-lg main-navbar">
+
+    <div class="container">
+
+        <a class="navbar-brand" href="#inicio">
+
+            <div class="brand-mark">
+
+                <svg
+                    viewBox="0 0 100 100"
+                    fill="none">
+
+                    <path
+                        d="M50 12L79 29V62L50 88L21 62V29L50 12Z"
+                        stroke="white"
+                        stroke-width="5"/>
+
+                    <path
+                        d="M50 29L61 37L57 50H43L39 37L50 29Z"
+                        fill="#8fc7ff"/>
+
+                    <path
+                        d="M39 37L27 43L31 56L43 50"
+                        stroke="white"
+                        stroke-width="3"/>
+
+                    <path
+                        d="M61 37L73 43L69 56L57 50"
+                        stroke="white"
+                        stroke-width="3"/>
+
+                </svg>
+
+            </div>
+
+            <div>
+
+                Champions Fútbol
+
+                <span class="brand-subtitle">
+                    Sistema de gestión deportiva
+                </span>
+
+            </div>
+
+        </a>
+
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navMenu">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="navMenu">
+
+            <div class="nav-links ms-auto">
+
+                <a
+                    class="nav-link"
+                    href="#inicio">
+                    Inicio
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="#gestion">
+                    Gestión
+                </a>
+
+                <a
+                    class="nav-link"
+                    th:href="@{/club/listar}">
+                    Clubes
+                </a>
+
+                <a
+                    class="nav-link"
+                    th:href="@{/jugador/listar}">
+                    Jugadores
+                </a>
+
+                <a
+                    class="nav-action"
+                    th:href="@{/club}">
+                    Registrar club →
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<header
+    class="hero"
+    id="inicio">
+
+
+    <!-- SLIDE 1 -->
+
+    <div class="hero-slide active">
+
+        <div class="hero-image"></div>
+
+        <div class="hero-overlay"></div>
+
+
+        <div class="container hero-content">
+
+            <div class="hero-copy">
+
+                <div class="eyebrow">
+
+                    <span class="eyebrow-dot"></span>
+
+                    Plataforma de gestión deportiva
+
+                </div>
+
+
+                <h1 class="hero-title">
+
+                    El fútbol
+
+                    <span>
+                        empieza aquí.
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-text">
+
+                    Gestiona clubes, jugadores, entrenadores,
+                    asociaciones y competiciones desde una
+                    única plataforma diseñada para mantener
+                    toda tu estructura deportiva bajo control.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        class="hero-btn hero-btn-primary"
+                        href="#gestion">
+
+                        Explorar plataforma
+
+                        <span>→</span>
+
+                    </a>
+
+
+                    <a
+                        class="hero-btn hero-btn-secondary"
+                        th:href="@{/club/listar}">
+
+                        Ver clubes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SLIDE 2 -->
+
+    <div class="hero-slide">
+
+        <div class="hero-image"></div>
+
+        <div class="hero-overlay"></div>
+
+
+        <div class="container hero-content">
+
+            <div class="hero-copy">
+
+                <div class="eyebrow">
+
+                    <span class="eyebrow-dot"></span>
+
+                    Administración de clubes
+
+                </div>
+
+
+                <h1 class="hero-title">
+
+                    Cada equipo.
+
+                    <span>
+                        Una historia.
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-text">
+
+                    Registra y administra la información
+                    de cada club para construir una base
+                    deportiva organizada y preparada para
+                    competir.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        class="hero-btn hero-btn-primary"
+                        th:href="@{/club}">
+
+                        Registrar club
+
+                        <span>→</span>
+
+                    </a>
+
+
+                    <a
+                        class="hero-btn hero-btn-secondary"
+                        th:href="@{/club/listar}">
+
+                        Consultar clubes
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SLIDE 3 -->
+
+    <div class="hero-slide">
+
+        <div class="hero-image"></div>
+
+        <div class="hero-overlay"></div>
+
+
+        <div class="container hero-content">
+
+            <div class="hero-copy">
+
+                <div class="eyebrow">
+
+                    <span class="eyebrow-dot"></span>
+
+                    Gestión de plantillas
+
+                </div>
+
+
+                <h1 class="hero-title">
+
+                    El talento
+
+                    <span>
+                        mueve el juego.
+                    </span>
+
+                </h1>
+
+
+                <p class="hero-text">
+
+                    Mantén organizados los datos de tus
+                    jugadores y entrenadores y construye
+                    una estructura deportiva preparada
+                    para cada competición.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        class="hero-btn hero-btn-primary"
+                        th:href="@{/jugador}">
+
+                        Gestionar jugadores
+
+                        <span>→</span>
+
+                    </a>
+
+
+                    <a
+                        class="hero-btn hero-btn-secondary"
+                        th:href="@{/entrenador/listar}">
+
+                        Ver entrenadores
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- INFORMACIÓN INFERIOR -->
+
+    <div class="hero-info">
+
+        <div class="container">
+
+            <div class="hero-info-inner">
+
+
+                <div class="hero-meta">
+
+                    <div class="meta-item">
+
+                        <span class="meta-number">
+                            05
+                        </span>
+
+                        <span class="meta-label">
+                            Módulos
+                        </span>
+
+                    </div>
+
+
+                    <div class="meta-item">
+
+                        <span class="meta-number">
+                            01
+                        </span>
+
+                        <span class="meta-label">
+                            Plataforma
+                        </span>
+
+                    </div>
+
+
+                    <div class="meta-item">
+
+                        <span class="meta-number">
+                            ∞
+                        </span>
+
+                        <span class="meta-label">
+                            Posibilidades
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-controls">
+
+                    <span
+                        class="slide-counter"
+                        id="slideCounter">
+
+                        01 / 03
+
+                    </span>
+
+
+                    <button
+                        class="slider-btn"
+                        id="prevSlide"
+                        aria-label="Anterior">
+
+                        ←
+
+                    </button>
+
+
+                    <button
+                        class="slider-btn"
+                        id="nextSlide"
+                        aria-label="Siguiente">
+
+                        →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="slider-progress"
+        id="sliderProgress">
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     INTRO
+========================================================= -->
+
+<section class="intro">
+
+    <div class="container">
+
+        <div class="row align-items-end g-5">
+
+            <div class="col-lg-7">
+
+                <div class="section-eyebrow">
+                    Centro de competición
+                </div>
+
+                <h2 class="section-heading">
+                    Todo lo que necesitas.
+                    <span>En un solo lugar.</span>
+                </h2>
+
+            </div>
+
+
+            <div class="col-lg-5">
+
+                <p class="intro-description">
+
+                    Desde la administración de clubes hasta
+                    la gestión de jugadores, entrenadores y
+                    competiciones. Mantén la estructura de
+                    tu organización deportiva centralizada.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     MÓDULOS
+========================================================= -->
+
+<section
+    class="modules"
+    id="gestion">
+
+    <div class="container">
+
+        <div class="row g-4">
+
+
+            <!-- CLUBES -->
+
+            <div class="col-lg-6">
+
+                <article class="module">
+
+                    <span class="module-number">
+                        01
+                    </span>
+
+
+                    <div class="module-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.7">
+
+                            <path
+                                d="M12 3L19 6V11C19 15.5 16.1 19.1 12 21C7.9 19.1 5 15.5 5 11V6L12 3Z"/>
+
+                            <path
+                                d="M12 7L13.5 10L17 10.5L14.5 13L15 16.5L12 15L9 16.5L9.5 13L7 10.5L10.5 10L12 7Z"/>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Clubes
+                    </h3>
+
+
+                    <p>
+
+                        Registra nuevos equipos, consulta su
+                        información y administra todos los datos
+                        relacionados con cada club.
+
+                    </p>
+
+
+                    <div class="module-actions">
+
+                        <a
+                            class="module-btn primary"
+                            th:href="@{/club}">
+
+                            + Registrar club
+
+                        </a>
+
+
+                        <a
+                            class="module-btn"
+                            th:href="@{/club/listar}">
+
+                            Ver clubes →
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- ASOCIACIONES -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <article class="module">
+
+                    <span class="module-number">
+                        02
+                    </span>
+
+
+                    <div class="module-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8">
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="8"/>
+
+                            <path
+                                d="M12 4V20"/>
+
+                            <path
+                                d="M4 12H20"/>
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="3"/>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Asociaciones
+                    </h3>
+
+
+                    <p>
+
+                        Administra las asociaciones a las
+                        que pertenecen los clubes.
+
+                    </p>
+
+
+                    <div class="module-actions">
+
+                        <a
+                            class="module-btn primary"
+                            th:href="@{/asociacion}">
+
+                            Registrar
+
+                        </a>
+
+
+                        <a
+                            class="module-btn"
+                            th:href="@{/asociacion/listar}">
+
+                            Ver →
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- COMPETICIONES -->
+
+            <div class="col-lg-3 col-md-6">
+
+                <article class="module">
+
+                    <span class="module-number">
+                        03
+                    </span>
+
+
+                    <div class="module-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8">
+
+                            <circle
+                                cx="12"
+                                cy="8"
+                                r="5"/>
+
+                            <path
+                                d="M8 13L7 21L12 18L17 21L16 13"/>
+
+                            <path
+                                d="M9 8L11 10L15 6"/>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Competiciones
+                    </h3>
+
+
+                    <p>
+
+                        Controla los torneos y competiciones
+                        disponibles dentro del sistema.
+
+                    </p>
+
+
+                    <div class="module-actions">
+
+                        <a
+                            class="module-btn primary"
+                            th:href="@{/competicion}">
+
+                            Registrar
+
+                        </a>
+
+
+                        <a
+                            class="module-btn"
+                            th:href="@{/competicion/listar}">
+
+                            Ver →
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- ENTRENADORES -->
+
+            <div class="col-lg-6 col-md-6">
+
+                <article class="module">
+
+                    <span class="module-number">
+                        04
+                    </span>
+
+
+                    <div class="module-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.7">
+
+                            <circle
+                                cx="12"
+                                cy="8"
+                                r="4"/>
+
+                            <path
+                                d="M4 21C4.8 16.8 7.4 14 12 14C16.6 14 19.2 16.8 20 21"/>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Entrenadores
+                    </h3>
+
+
+                    <p>
+
+                        Registra y consulta la información
+                        de los entrenadores encargados de
+                        dirigir los clubes.
+
+                    </p>
+
+
+                    <div class="module-actions">
+
+                        <a
+                            class="module-btn primary"
+                            th:href="@{/entrenador}">
+
+                            Registrar
+
+                        </a>
+
+
+                        <a
+                            class="module-btn"
+                            th:href="@{/entrenador/listar}">
+
+                            Ver entrenadores →
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- JUGADORES -->
+
+            <div class="col-lg-6 col-md-6">
+
+                <article class="module">
+
+                    <span class="module-number">
+                        05
+                    </span>
+
+
+                    <div class="module-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.7">
+
+                            <circle
+                                cx="12"
+                                cy="12"
+                                r="8"/>
+
+                            <path
+                                d="M12 7L14.5 9L13.5 12H10.5L9.5 9L12 7Z"/>
+
+                            <path
+                                d="M9.5 9L6 10.5"/>
+
+                            <path
+                                d="M14.5 9L18 10.5"/>
+
+                            <path
+                                d="M10.5 12L8 15"/>
+
+                            <path
+                                d="M13.5 12L16 15"/>
+
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Jugadores
+                    </h3>
+
+
+                    <p>
+
+                        Administra los jugadores, sus datos
+                        personales, número y posición dentro
+                        de cada plantel.
+
+                    </p>
+
+
+                    <div class="module-actions">
+
+                        <a
+                            class="module-btn primary"
+                            th:href="@{/jugador}">
+
+                            Registrar
+
+                        </a>
+
+
+                        <a
+                            class="module-btn"
+                            th:href="@{/jugador/listar}">
+
+                            Ver jugadores →
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     ESTADÍSTICAS
+========================================================= -->
+
+<section class="stats">
+
+    <div class="container">
+
+        <div class="row align-items-center">
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        05<span>+</span>
+                    </div>
+
+                    <div class="stat-label">
+                        Módulos de gestión
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        100<span>%</span>
+                    </div>
+
+                    <div class="stat-label">
+                        Información centralizada
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        01
+                    </div>
+
+                    <div class="stat-label">
+                        Plataforma deportiva
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="stat">
+
+                    <div class="stat-number">
+                        ∞
+                    </div>
+
+                    <div class="stat-label">
+                        Posibilidades
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CTA
+========================================================= -->
+
+<section class="cta">
+
+    <div class="container">
+
+        <div class="cta-content">
+
+            <div class="section-eyebrow">
+                Tu competición comienza aquí
+            </div>
+
+
+            <h2 class="cta-title">
+
+                Construye.
+
+                <span>
+                    Organiza.
+                </span>
+
+                Compite.
+
+            </h2>
+
+
+            <p class="cta-text">
+
+                Lleva la administración de tu estructura
+                deportiva a un nuevo nivel. Toda la información
+                que necesitas, organizada desde un único lugar.
+
+            </p>
+
+
+            <!-- BOTÓN ACTUALIZADO -->
+
+            <a
+                class="hero-btn hero-btn-primary"
+                href="#gestion">
+
+                Comenzar ahora
+
+                <span>→</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+    <div class="container">
+
+        <div class="row g-5">
+
+            <div class="col-lg-6">
+
+                <div class="footer-brand">
+
+                    <div class="brand-mark">
+
+                        <svg
+                            viewBox="0 0 100 100"
+                            fill="none">
+
+                            <path
+                                d="M50 12L79 29V62L50 88L21 62V29L50 12Z"
+                                stroke="white"
+                                stroke-width="5"/>
+
+                            <path
+                                d="M50 29L61 37L57 50H43L39 37L50 29Z"
+                                fill="#8fc7ff"/>
+
+                        </svg>
+
+                    </div>
+
+                    Champions Fútbol
+
+                </div>
+
+
+                <p class="footer-description">
+
+                    Sistema de gestión deportiva para
+                    administrar clubes, asociaciones,
+                    competiciones, entrenadores y jugadores
+                    desde una única plataforma.
+
+                </p>
+
+            </div>
+
+
+            <div class="col-6 col-lg-2">
+
+                <div class="footer-title">
+                    Plataforma
+                </div>
+
+                <div class="footer-links">
+
+                    <a href="#inicio">
+                        Inicio
+                    </a>
+
+                    <a href="#gestion">
+                        Gestión
+                    </a>
+
+                    <a th:href="@{/club/listar}">
+                        Clubes
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-lg-2">
+
+                <div class="footer-title">
+                    Gestión
+                </div>
+
+                <div class="footer-links">
+
+                    <a th:href="@{/jugador/listar}">
+                        Jugadores
+                    </a>
+
+                    <a th:href="@{/entrenador/listar}">
+                        Entrenadores
+                    </a>
+
+                    <a th:href="@{/competicion/listar}">
+                        Competiciones
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6 col-lg-2">
+
+                <div class="footer-title">
+                    Sistema
+                </div>
+
+                <div class="footer-links">
+
+                    <a th:href="@{/asociacion/listar}">
+                        Asociaciones
+                    </a>
+
+                    <a th:href="@{/club}">
+                        Registrar club
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <div class="d-flex justify-content-between flex-wrap gap-3">
+
+                <span>
+                    © 2026 Champions Fútbol
+                </span>
+
+                <span>
+                    Proyecto académico · Gestión deportiva
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =========================================================
+     BOOTSTRAP
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- =========================================================
+     CARRUSEL
+========================================================= -->
+
+<script>
+
+    const slides =
+        document.querySelectorAll('.hero-slide');
+
+    const nextButton =
+        document.getElementById('nextSlide');
+
+    const prevButton =
+        document.getElementById('prevSlide');
+
+    const counter =
+        document.getElementById('slideCounter');
+
+    const progress =
+        document.getElementById('sliderProgress');
+
+    let currentSlide = 0;
+
+    let autoplay;
+
+
+    function showSlide(index) {
+
+        slides.forEach((slide, i) => {
+
+            slide.classList.toggle(
+                'active',
+                i === index
+            );
+
+        });
+
+
+        counter.textContent =
+            `0${index + 1} / 0${slides.length}`;
+
+
+        progress.style.width =
+            `${((index + 1) / slides.length) * 100}%`;
+
+        currentSlide = index;
+    }
+
+
+    function nextSlide() {
+
+        const next =
+            (currentSlide + 1) % slides.length;
+
+        showSlide(next);
+    }
+
+
+    function previousSlide() {
+
+        const previous =
+            (currentSlide - 1 + slides.length)
+            % slides.length;
+
+        showSlide(previous);
+    }
+
+
+    function startAutoplay() {
+
+        clearInterval(autoplay);
+
+        autoplay =
+            setInterval(nextSlide, 6500);
+    }
+
+
+    nextButton.addEventListener(
+        'click',
+        () => {
+
+            nextSlide();
+
+            startAutoplay();
+
+        }
+    );
+
+
+    prevButton.addEventListener(
+        'click',
+        () => {
+
+            previousSlide();
+
+            startAutoplay();
+
+        }
+    );
+
+
+    showSlide(0);
+
+    startAutoplay();
+
+</script>
+
+
+</body>
+
+</html>
